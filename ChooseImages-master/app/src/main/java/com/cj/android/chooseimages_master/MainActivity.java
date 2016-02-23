@@ -1,11 +1,14 @@
 package com.cj.android.chooseimages_master;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -43,12 +46,21 @@ public class MainActivity extends Activity {
                 .build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);
+
+        WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+
+        int width = wm.getDefaultDisplay().getWidth();
+        int height = wm.getDefaultDisplay().getHeight();
+
+        TextView tv = (TextView) findViewById(R.id.tv);
+        tv.setText(height + "X" + width);
     }
 
     public void b1(View view) {
         Intent intent = new Intent(this, Choose1Activity.class);
         intent.putStringArrayListExtra("data", paths);
         startActivityForResult(intent, 10000);
+
     }
 
     public void b2(View view) {

@@ -6,7 +6,7 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/y100"
+        android:layout_height="50dp"
         android:background="@android:color/black">
 
         <TextView
@@ -16,7 +16,7 @@
             android:clickable="true"
             android:gravity="center_vertical"
             android:onClick="back"
-            android:paddingLeft="@dimen/x10"
+            android:paddingLeft="5dp"
             android:text="返回"
             android:textColor="@android:color/white" />
 
@@ -36,7 +36,7 @@
             android:clickable="true"
             android:gravity="center_vertical"
             android:onClick="complete"
-            android:paddingRight="@dimen/x10"
+            android:paddingRight="5dp"
             android:text="完成"
             android:textColor="@android:color/white" />
     </RelativeLayout>
