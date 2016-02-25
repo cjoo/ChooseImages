@@ -1,7 +1,6 @@
 package com.cj.android.chooseimages_master;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -9,14 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.cj.android.chooseimages.ChooseImagesV4Fragment;
-import com.cj.android.chooseimages.DisplayImage;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.cj.android.chooseimages.displayimage.DisplayImage;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
 /**
  * Created by maesinfo-024 on 2016/2/22.
@@ -44,7 +37,7 @@ public class Choose1Activity extends FragmentActivity {
     }
 
     public void clear(View view) {
-        fragment.clear();
+        fragment.clearChecked();
     }
 
     private void initView() {

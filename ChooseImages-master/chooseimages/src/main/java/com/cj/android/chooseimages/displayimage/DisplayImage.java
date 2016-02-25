@@ -1,4 +1,4 @@
-package com.cj.android.chooseimages;
+package com.cj.android.chooseimages.displayimage;
 
 import android.view.View;
 

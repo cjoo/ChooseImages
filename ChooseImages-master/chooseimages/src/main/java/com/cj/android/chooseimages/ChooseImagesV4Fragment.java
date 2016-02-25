@@ -1,10 +1,7 @@
 package com.cj.android.chooseimages;
 
 import android.content.pm.ActivityInfo;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +10,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
+
+import com.cj.android.chooseimages.displayimage.DisplayImage;
+import com.cj.android.chooseimages.imagesearch.ImageFileSearch;
+import com.cj.android.chooseimages.imagesearch.SDCardImageFileSearch;
+import com.cj.android.chooseimages.progress.ProgressAsyncTask;
+import com.cj.android.chooseimages.progress.view.DefaultProgressView;
+import com.cj.android.chooseimages.progress.view.ProgressView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,20 +39,30 @@ public class ChooseImagesV4Fragment extends Fragment {
     private DisplayImage displayImage;
     //最大选中数
     private int maxNumber = 6;
-    //文件筛选异步任务
+    //文件筛选任务
     private FileFilterAsyncTask fileFilterAsyncTask;
+    //查找出来的图片地址集合
+    private static List<String> pathsCache;
+    //文件查找类对象
+    private ImageFileSearch imageFileSearch = new SDCardImageFileSearch();
+    //查找进度视图
+    private ProgressView progressView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setRetainInstance(true);//在配置变化的时候将这个fragment保存下来
         fileFilterAsyncTask = new FileFilterAsyncTask();
+        if (progressView == null) {
+            //取个默认值
+            progressView = new DefaultProgressView(getActivity());
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, null);
+        View view = inflater.inflate(R.layout.cis_fragment_main, null);
         initView(view);
         return view;
     }
@@ -63,12 +77,11 @@ public class ChooseImagesV4Fragment extends Fragment {
                 itemCheck(position);
             }
         });
-        if (!Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Toast.makeText(getActivity(), "没有SD卡", Toast.LENGTH_LONG).show();
-        } else {
-            //开始遍历SD卡找出图片
+        if (pathsCache == null) {
+            //开始找出图片
             fileFilterAsyncTask.execute();
+        } else {
+            fileFilterAsyncTask.complete(pathsCache);
         }
         //不支持横竖屏
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
@@ -93,7 +106,7 @@ public class ChooseImagesV4Fragment extends Fragment {
     }
 
     /**
-     * 设置图片选中监听
+     * 设置图片选中监听器
      *
      * @param onChooseClickListener
      */
@@ -111,83 +124,94 @@ public class ChooseImagesV4Fragment extends Fragment {
     }
 
     /**
-     * 清空
+     * 设置图片地址查找对象
+     *
+     * @param imageFileSearch
      */
-    public void clear() {
+    public void setImageFileSearch(ImageFileSearch imageFileSearch) {
+        this.imageFileSearch = imageFileSearch;
+    }
+
+    /**
+     * 设置图片查找进度视图
+     *
+     * @param progressView
+     */
+    public void setProgressView(ProgressView progressView) {
+        this.progressView = progressView;
+    }
+
+    /**
+     * 设置图片的加载对象
+     *
+     * @param displayImage
+     */
+    public void setDisplayImage(DisplayImage displayImage) {
+        this.displayImage = displayImage;
+        if (imagesAdapter != null) {
+            imagesAdapter.setDisplayImage(displayImage);
+        }
+    }
+
+    /**
+     * 清空选中状态
+     */
+    public void clearChecked() {
         itemsCheck(this.paths);
     }
 
-    //文件筛选异步任务
-    private class FileFilterAsyncTask extends AsyncTask<Void, File, List<String>> {
-        private BitmapFactory.Options mOptions;
-        private ProgressDialog mProgressDialog;
+    /**
+     * 清空查找出来的图片地址
+     */
+    public void clearPathsCache() {
+        pathsCache = null;
+    }
 
-        public FileFilterAsyncTask() {
-            mOptions = new BitmapFactory.Options();
-            mOptions.inJustDecodeBounds = true;
-            mProgressDialog = new ProgressDialog(getActivity());
+    /**
+     * 重新查找图片地址
+     */
+    public void againLoad() {
+        if (fileFilterAsyncTask.isComplete) {
+            fileFilterAsyncTask.execute();
         }
+    }
+
+    //文件筛选异步任务
+    private class FileFilterAsyncTask extends ProgressAsyncTask {
+        public boolean isComplete = true;
 
         @Override
         protected List<String> doInBackground(Void... params) {
-            return getFilePaths(Environment.getExternalStorageDirectory());
+            return pathsCache = imageFileSearch.getFilePaths(this);
         }
 
         @Override
         protected void onProgressUpdate(File... values) {
             super.onProgressUpdate(values);
-            mProgressDialog.setProgress(values[0]);
-
+            progressView.setProgress(values[0]);
         }
 
         @Override
         protected void onPreExecute() {
+            isComplete = false;
             super.onPreExecute();
-            mProgressDialog.show();
+            progressView.show();
         }
 
         @Override
         protected void onPostExecute(List<String> strings) {
             super.onPostExecute(strings);
+            complete(strings);
+            progressView.dismiss();
+        }
+
+        public void complete(List<String> strings) {
             imagesAdapter.setPaths(strings);
             //初始选中的图片
             List<String> paths = new ArrayList<String>(ChooseImagesV4Fragment.this.paths);
             ChooseImagesV4Fragment.this.paths.clear();
             itemsCheck(paths);
-
-            mProgressDialog.dismiss();
-        }
-
-        // 遍历一个文件路径，然后把文件子目录中的图片文件地址返回
-        private List<String> getFilePaths(File root) {
-            List<String> result = new ArrayList<String>();//返回对象
-            List<File[]> fileList = new ArrayList<File[]>();//需要遍历的文件或文件夹
-            fileList.add(root.listFiles());//首先把根目录下所有文件和文件夹添加进fileList
-            //size>0遍历
-            while (fileList.size() > 0) {
-                File files[] = fileList.get(0);
-                if (files != null) {
-                    for (File f : files) {
-                        //进度
-                        publishProgress(f);
-                        //是文件夹
-                        if (f.isDirectory()) {
-                            fileList.add(f.listFiles());
-                        }
-                        //是文件
-                        else {
-                            BitmapFactory.decodeFile(f.getAbsolutePath(), mOptions);
-                            //是图片文件
-                            if (mOptions.outWidth != -1) {
-                                result.add(f.getAbsolutePath());
-                            }
-                        }
-                    }
-                }
-                fileList.remove(0);
-            }
-            //size=0，已遍历完SD卡所有文件
-            return result;//返回图片路径集合
+            isComplete = true;
         }
     }
 
@@ -226,21 +250,9 @@ public class ChooseImagesV4Fragment extends Fragment {
             }
             paths.add(typePath.path);
         }
-        imagesAdapter.check(position);
+        imagesAdapter.check(position, gridView);
         if (onChooseClickListener != null) {
             onChooseClickListener.onItemClick(typePath.path, typePath.checked);
-        }
-    }
-
-    /**
-     * 设置图片的加载对象
-     *
-     * @param displayImage
-     */
-    public void setDisplayImage(DisplayImage displayImage) {
-        this.displayImage = displayImage;
-        if (imagesAdapter != null) {
-            imagesAdapter.setDisplayImage(displayImage);
         }
     }
 }

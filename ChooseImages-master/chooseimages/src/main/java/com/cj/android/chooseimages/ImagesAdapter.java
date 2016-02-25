@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import com.cj.android.chooseimages.displayimage.DisplayImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +54,16 @@ public class ImagesAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void check(int position) {
+    public void check(int position, AbsListView absListView) {
         TypePath typePath = (TypePath) getItem(position);
         typePath.checked = !typePath.checked;
-        notifyDataSetChanged();
+        int firstVisiblePosition = absListView.getFirstVisiblePosition();
+        int lastVisiblePosition = absListView.getLastVisiblePosition();
+        if (position >= firstVisiblePosition && firstVisiblePosition <= lastVisiblePosition) {
+            View childView = absListView.getChildAt(position - firstVisiblePosition);
+            Holder holder = (Holder) childView.getTag();
+            holder.checkType.setVisibility(typePath.checked ? View.VISIBLE : View.GONE);
+        }
     }
 
     /**
@@ -85,7 +94,7 @@ public class ImagesAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Holder holder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.adapter_main, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.cis_adapter_main, null);
             holder = new Holder();
             holder.imageView = (ImageView) convertView.findViewById(R.id.iv_main);
             holder.checkType = (ImageView) convertView.findViewById(R.id.iv_checkType);

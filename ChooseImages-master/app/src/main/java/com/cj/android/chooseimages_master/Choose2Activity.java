@@ -9,14 +9,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cj.android.chooseimages.ChooseImagesFragment;
-import com.cj.android.chooseimages.DisplayImage;
+import com.cj.android.chooseimages.displayimage.DisplayImage;
 import com.cj.android.chooseimages.OnChooseClickListener;
+import com.cj.android.chooseimages.imagesearch.MediaStoreImageFileSearch;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by maesinfo-024 on 2016/2/23.
@@ -48,6 +47,7 @@ public class Choose2Activity extends Activity implements OnChooseClickListener {
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
 
         fragment = new ChooseImagesFragment();
+        fragment.setImageFileSearch(new MediaStoreImageFileSearch(getContentResolver()));
         fragment.setOnChooseClickListener(this);
         fragment.setMaxNumber(10);
         fragment.setPaths(getIntent().getStringArrayListExtra("data"));

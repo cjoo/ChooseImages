@@ -1,24 +1,26 @@
-package com.cj.android.chooseimages;
+package com.cj.android.chooseimages.progress.view;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.widget.TextView;
+
+import com.cj.android.chooseimages.R;
 
 import java.io.File;
 
 /**
  * Created by jian.cao on 2016/2/23.
  */
-public class ProgressDialog extends Dialog {
+public class DefaultProgressView extends Dialog implements ProgressView {
     private TextView tv_path, tv_name;
 
-    public ProgressDialog(Context context) {
+    public DefaultProgressView(Context context) {
         super(context, R.style.progress_dialog);
         initView();
     }
 
     private void initView() {
-        setContentView(R.layout.dialog_progress);
+        setContentView(R.layout.cis_dialog_progress);
         setCancelable(false);
         tv_path = (TextView) findViewById(R.id.tv_path);
         tv_name = (TextView) findViewById(R.id.tv_name);
