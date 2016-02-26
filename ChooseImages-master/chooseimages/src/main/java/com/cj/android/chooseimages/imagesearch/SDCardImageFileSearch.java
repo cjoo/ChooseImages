@@ -1,7 +1,9 @@
 package com.cj.android.chooseimages.imagesearch;
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.cj.android.chooseimages.progress.FileSearchProgress;
 
@@ -14,8 +16,10 @@ import java.util.List;
  */
 public class SDCardImageFileSearch implements ImageFileSearch {
     private BitmapFactory.Options mOptions;
+    private Context context;
 
-    public SDCardImageFileSearch() {
+    public SDCardImageFileSearch(Context context) {
+        this.context = context;
         mOptions = new BitmapFactory.Options();
         mOptions.inJustDecodeBounds = true;
     }
@@ -24,6 +28,7 @@ public class SDCardImageFileSearch implements ImageFileSearch {
     public List<String> getFilePaths(FileSearchProgress<File> fileFileSearchProgress) {
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(context, "没有SD卡！", Toast.LENGTH_SHORT).show();
             return new ArrayList<String>();
         }
         List<String> result = new ArrayList<String>();//返回对象

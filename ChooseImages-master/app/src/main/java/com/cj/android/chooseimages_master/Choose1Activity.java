@@ -44,12 +44,6 @@ public class Choose1Activity extends FragmentActivity {
         fragment = new ChooseImagesV4Fragment();
         fragment.setMaxNumber(6);
         fragment.setPaths(getIntent().getStringArrayListExtra("data"));
-        fragment.setDisplayImage(new DisplayImage() {
-            @Override
-            public void display(View view, String path) {
-                ImageLoader.getInstance().displayImage("file://" + path, (ImageView) view, Options.getDisplayImageOptions());
-            }
-        });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();

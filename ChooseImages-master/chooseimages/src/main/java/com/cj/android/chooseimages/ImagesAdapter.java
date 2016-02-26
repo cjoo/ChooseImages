@@ -62,7 +62,8 @@ public class ImagesAdapter extends BaseAdapter {
         if (position >= firstVisiblePosition && firstVisiblePosition <= lastVisiblePosition) {
             View childView = absListView.getChildAt(position - firstVisiblePosition);
             Holder holder = (Holder) childView.getTag();
-            holder.checkType.setVisibility(typePath.checked ? View.VISIBLE : View.GONE);
+            holder.checkType.setImageResource(typePath.checked ?
+                    android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
         }
     }
 
@@ -106,7 +107,8 @@ public class ImagesAdapter extends BaseAdapter {
         if (displayImage != null) {
             displayImage.display(holder.imageView, typePath.path);
         }
-        holder.checkType.setVisibility(typePath.checked ? View.VISIBLE : View.GONE);
+        holder.checkType.setImageResource(typePath.checked ?
+                android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
         return convertView;
     }
 

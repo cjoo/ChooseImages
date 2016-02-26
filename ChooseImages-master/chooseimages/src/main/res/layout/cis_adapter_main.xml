@@ -7,11 +7,11 @@
         android:id="@+id/iv_main"
         android:layout_width="@dimen/x260"
         android:layout_height="@dimen/x260"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/iv_checkType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/checkbox_on_background" />
+        android:src="@android:drawable/checkbox_off_background" />
 </RelativeLayout>

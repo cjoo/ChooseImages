@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.cj.android.chooseimages.displayimage.DefaultDisplayImage;
 import com.cj.android.chooseimages.displayimage.DisplayImage;
 import com.cj.android.chooseimages.imagesearch.ImageFileSearch;
 import com.cj.android.chooseimages.imagesearch.SDCardImageFileSearch;
@@ -44,7 +45,7 @@ public class ChooseImagesFragment extends Fragment {
     //查找出来的图片地址集合
     private static List<String> pathsCache;
     //文件查找类对象
-    private ImageFileSearch imageFileSearch = new SDCardImageFileSearch();
+    private ImageFileSearch imageFileSearch;
     //查找进度视图
     private ProgressView progressView;
 
@@ -53,10 +54,22 @@ public class ChooseImagesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 //        setRetainInstance(true);//在配置变化的时候将这个fragment保存下来
         fileFilterAsyncTask = new FileFilterAsyncTask();
+        //取个默认值
         if (progressView == null) {
-            //取个默认值
             progressView = new DefaultProgressView(getActivity());
         }
+        if (displayImage == null) {
+            displayImage = new DefaultDisplayImage(getActivity());
+        }
+        if (imageFileSearch == null) {
+            imageFileSearch = new SDCardImageFileSearch(getActivity());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        displayImage.destroy();
     }
 
     @Nullable

@@ -7,5 +7,8 @@
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="3"></GridView>
+        android:horizontalSpacing="@dimen/x10"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="3"
+        android:verticalSpacing="@dimen/x10"></GridView>
 </LinearLayout>
