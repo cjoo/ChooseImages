@@ -1,4 +1,4 @@
-package com.cj.android.chooseimages;
+package com.cj.android.chooseimages.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.cj.android.chooseimages.R;
+import com.cj.android.chooseimages.TypePath;
 import com.cj.android.chooseimages.displayimage.DisplayImage;
 
 import java.util.ArrayList;
@@ -22,14 +24,13 @@ public class ImagesAdapter extends BaseAdapter {
     private List<TypePath> paths;
     //负责加载图片
     private DisplayImage displayImage;
+    //check
+    private CheckView checkView;
 
-    public ImagesAdapter(Context context) {
-        this(context, null);
-    }
-
-    public ImagesAdapter(Context context, DisplayImage displayImage) {
+    public ImagesAdapter(Context context, DisplayImage displayImage, CheckView checkView) {
         this.mContext = context;
         this.displayImage = displayImage;
+        this.checkView = checkView;
         paths = new ArrayList<TypePath>();
     }
 
@@ -61,9 +62,10 @@ public class ImagesAdapter extends BaseAdapter {
         int lastVisiblePosition = absListView.getLastVisiblePosition();
         if (position >= firstVisiblePosition && firstVisiblePosition <= lastVisiblePosition) {
             View childView = absListView.getChildAt(position - firstVisiblePosition);
-            Holder holder = (Holder) childView.getTag();
-            holder.checkType.setImageResource(typePath.checked ?
-                    android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
+            if (childView != null) {
+                Holder holder = (Holder) childView.getTag();
+                checkView.check(holder.check, typePath.checked);
+            }
         }
     }
 
@@ -96,19 +98,18 @@ public class ImagesAdapter extends BaseAdapter {
         Holder holder = null;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.cis_adapter_main, null);
+            View check = checkView.getView();
+            ((ViewGroup) convertView).addView(check, checkView.getLayoutParams());
             holder = new Holder();
             holder.imageView = (ImageView) convertView.findViewById(R.id.iv_main);
-            holder.checkType = (ImageView) convertView.findViewById(R.id.iv_checkType);
+            holder.check = check;
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
         }
         final TypePath typePath = (TypePath) getItem(position);
-        if (displayImage != null) {
-            displayImage.display(holder.imageView, typePath.path);
-        }
-        holder.checkType.setImageResource(typePath.checked ?
-                android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
+        displayImage.display(holder.imageView, typePath.path);
+        checkView.check(holder.check, typePath.checked);
         return convertView;
     }
 
@@ -116,6 +117,6 @@ public class ImagesAdapter extends BaseAdapter {
         //SD卡图片
         public ImageView imageView;
         //选中状态图
-        public ImageView checkType;
+        public View check;
     }
 }

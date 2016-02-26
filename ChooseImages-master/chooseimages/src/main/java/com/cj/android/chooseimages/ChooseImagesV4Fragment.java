@@ -11,6 +11,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.cj.android.chooseimages.adapter.CheckView;
+import com.cj.android.chooseimages.adapter.DefaultCheckView;
+import com.cj.android.chooseimages.adapter.ImagesAdapter;
 import com.cj.android.chooseimages.displayimage.DefaultDisplayImage;
 import com.cj.android.chooseimages.displayimage.DisplayImage;
 import com.cj.android.chooseimages.imagesearch.ImageFileSearch;
@@ -48,6 +51,8 @@ public class ChooseImagesV4Fragment extends Fragment {
     private ImageFileSearch imageFileSearch;
     //查找进度视图
     private ProgressView progressView;
+    //check
+    private CheckView checkView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +68,9 @@ public class ChooseImagesV4Fragment extends Fragment {
         }
         if (imageFileSearch == null) {
             imageFileSearch = new SDCardImageFileSearch(getActivity());
+        }
+        if(checkView==null){
+            checkView = new DefaultCheckView(getActivity());
         }
     }
 
@@ -81,7 +89,7 @@ public class ChooseImagesV4Fragment extends Fragment {
     }
 
     private void initView(View parent) {
-        imagesAdapter = new ImagesAdapter(getActivity(), displayImage);
+        imagesAdapter = new ImagesAdapter(getActivity(), displayImage, checkView);
         gridView = (GridView) parent.findViewById(R.id.gridView);
         gridView.setAdapter(imagesAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -164,6 +172,15 @@ public class ChooseImagesV4Fragment extends Fragment {
         if (imagesAdapter != null) {
             imagesAdapter.setDisplayImage(displayImage);
         }
+    }
+
+    /**
+     * 设置checkView
+     *
+     * @param checkView
+     */
+    public void setCheckView(CheckView checkView) {
+        this.checkView = checkView;
     }
 
     /**
