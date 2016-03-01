@@ -1,8 +1,12 @@
 package com.cj.android.chooseimages.adapter;
 
 import android.content.Context;
+import android.graphics.Point;
+import android.support.percent.PercentLayoutHelper;
+import android.support.percent.PercentRelativeLayout;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -12,9 +16,14 @@ import android.widget.RelativeLayout;
  */
 public abstract class IconCheckView implements CheckView {
     private Context context;
+    private Point screenSize = new Point();
 
     public IconCheckView(Context context) {
         this.context = context;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//        wm.getDefaultDisplay().getSize(screenSize);//getSize(Point) API level 13 以上
+        screenSize.x = wm.getDefaultDisplay().getWidth();
+        screenSize.y = wm.getDefaultDisplay().getHeight();
     }
 
     @Override
@@ -24,7 +33,12 @@ public abstract class IconCheckView implements CheckView {
 
     @Override
     public RelativeLayout.LayoutParams getLayoutParams() {
-        return new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        PercentRelativeLayout.LayoutParams layoutParams = new PercentRelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        PercentLayoutHelper.PercentLayoutInfo percentLayoutInfo=new PercentLayoutHelper.PercentLayoutInfo();
+        percentLayoutInfo.leftMarginPercent = 0.006f;
+        percentLayoutInfo.topMarginPercent = 0.006f / screenSize.y * screenSize.x;
+        layoutParams.setPercentLayoutInfo(percentLayoutInfo);
+        return layoutParams;
     }
 
     @Override

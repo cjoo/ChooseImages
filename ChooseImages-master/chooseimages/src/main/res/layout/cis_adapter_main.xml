@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:percent="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/iv_main"
-        android:layout_width="@dimen/x260"
-        android:layout_height="@dimen/x260"
-        android:scaleType="centerCrop" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        percent:layout_heightPercent="0.321w"
+        percent:layout_marginPercent="0.006w"
+        percent:layout_widthPercent="0.321w" />
 
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>

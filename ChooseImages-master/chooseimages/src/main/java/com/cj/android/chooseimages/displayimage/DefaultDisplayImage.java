@@ -6,9 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
+import android.view.WindowManager;
 import android.widget.ImageView;
-
-import com.cj.android.chooseimages.R;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,11 +18,14 @@ import java.util.concurrent.Executors;
 public class DefaultDisplayImage extends DisplayImage<ImageView> {
     private static LruCache<String, Bitmap> lruCache;
     private Context context;
+    private float imageWidth;
     private static BitmapFactory.Options justDecodeOptions;
     private static ExecutorService executors;
 
     public DefaultDisplayImage(Context context) {
         this.context = context;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        imageWidth = wm.getDefaultDisplay().getWidth() * 3 / 10;
         if (lruCache == null) {
             lruCache = new LruCache<String, Bitmap>(
                     (int) (Runtime.getRuntime().maxMemory() / 8)) {
@@ -104,8 +106,8 @@ public class DefaultDisplayImage extends DisplayImage<ImageView> {
         public void run() {
             BitmapFactory.decodeFile(imagePath.path, justDecodeOptions);
             int scale;
-            float dimenWidth = context.getResources().getDimension(R.dimen.x260);
-            scale = (int) Math.min(justDecodeOptions.outWidth / dimenWidth, justDecodeOptions.outHeight / dimenWidth);
+
+            scale = (int) Math.min(justDecodeOptions.outWidth / imageWidth, justDecodeOptions.outHeight / imageWidth);
             if (scale < 1) {
                 scale = 1;
             }
