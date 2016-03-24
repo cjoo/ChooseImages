@@ -44,7 +44,7 @@ public class ChooseImagesV4Fragment extends Fragment {
     //最大选中数
     private int maxNumber = 6;
     //文件筛选任务
-    private FileFilterAsyncTask fileFilterAsyncTask;
+    private FileFilterAsyncTask fileFilterAsyncTask = new FileFilterAsyncTask();
     //查找出来的图片地址集合
     private static List<String> pathsCache;
     //文件查找类对象
@@ -58,10 +58,9 @@ public class ChooseImagesV4Fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setRetainInstance(true);//在配置变化的时候将这个fragment保存下来
-        fileFilterAsyncTask = new FileFilterAsyncTask();
         //取个默认值
         if (progressView == null) {
-            progressView = new DefaultProgressView(getActivity());
+            progressView = new DefaultProgressView(getActivity(), fileFilterAsyncTask);
         }
         if (displayImage == null) {
             displayImage = new DefaultDisplayImage(getActivity());
@@ -69,7 +68,7 @@ public class ChooseImagesV4Fragment extends Fragment {
         if (imageFileSearch == null) {
             imageFileSearch = new SDCardImageFileSearch(getActivity());
         }
-        if(checkView==null){
+        if (checkView == null) {
             checkView = new DefaultCheckView(getActivity());
         }
     }
@@ -106,6 +105,15 @@ public class ChooseImagesV4Fragment extends Fragment {
         }
         //不支持横竖屏
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+    }
+
+    /**
+     * 取消图片查询任务
+     */
+    public void cancelImageSearchTask() {
+        if (!fileFilterAsyncTask.isComplete) {
+            fileFilterAsyncTask.cancel(true);
+        }
     }
 
     /**

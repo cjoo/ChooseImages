@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.cj.android.chooseimages.ChooseImagesV4Fragment;
-import com.cj.android.chooseimages.displayimage.DisplayImage;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Created by maesinfo-024 on 2016/2/22.
