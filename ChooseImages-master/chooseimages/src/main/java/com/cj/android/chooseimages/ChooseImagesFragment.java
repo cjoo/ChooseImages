@@ -2,6 +2,7 @@ package com.cj.android.chooseimages;
 
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -99,7 +100,7 @@ public class ChooseImagesFragment extends Fragment {
         });
         if (pathsCache == null) {
             //开始找出图片
-            fileFilterAsyncTask.execute();
+            fileFilterAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             fileFilterAsyncTask.complete(pathsCache);
         }
@@ -210,7 +211,7 @@ public class ChooseImagesFragment extends Fragment {
      */
     public void againLoad() {
         if (fileFilterAsyncTask.isComplete) {
-            fileFilterAsyncTask.execute();
+            fileFilterAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
